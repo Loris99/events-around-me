@@ -1,0 +1,171 @@
+.container {
+    display: grid;
+     /* width:900px; */
+    height: 600px; 
+    grid-template-columns: 90px 1fr;
+    grid-template-rows: 70px 1fr;
+    grid-gap: 0px;
+    border: 3px solid blue;
+    border-top:none;
+    border-left:none;
+   
+ }
+ /* top bar styling */
+ .topBar{
+    grid-column: 1/ -1;
+     border: 3px solid blue;
+     border-right: none;
+     margin: 0px;
+    padding: 16px;
+    border-right: none;
+    text-decoration: none;
+    list-style-type: none;
+ }
+ 
+.topBar li{
+    float: left;
+    cursor: pointer;
+}
+
+.topBar li a, #pageTitle {
+    display: block;
+    color: blue;
+    font-size: 20px;
+    text-align: center;
+    /* padding: 16px ; */
+    text-decoration: none;
+    
+} 
+/* side bar styling */
+.sideBar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    grid-row: 2/-1;
+    /* width: 100%; */
+    background-color: white;
+    border: 3px solid blue;
+    border-top: none;
+    border-bottom: none;
+ }
+
+
+.sideBar li a {
+    float: left;
+    display: block;
+    color: blue;
+    width: 100%;
+    font-size: 20px;
+    text-align: center;
+    padding: 15px 0px;
+    text-decoration: none; 
+    border-bottom: 3px solid blue;
+    cursor: pointer;
+    
+   
+} 
+.sideBar li:last-child a{
+    border-bottom: none;
+    
+  } 
+  .sideBar a:active{
+    background-color:grey;
+    cursor: pointer;
+  }
+  /* .activee { */
+    /* background-color:grey; */
+  /* } */
+
+/* middle container */
+  .inside {
+  grid-area:2/2/-1/-1 ;
+  display: none;
+}
+/* event cards style */
+.cardsContainer{
+        display: grid;
+        /* grid-area:2/2/-1/-1 ; */
+        overflow: auto;
+        grid-template-rows: repeat(auto, minmax(170px, 200px));
+        width: 100%;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 300px));
+}
+.card{
+    /* border: 2px; */
+    border: 2px solid rgb(3, 3, 26);
+    width: 180px;
+    height: 120px;
+    margin: 30px;
+    padding: 20px;
+    text-align: center;
+    /* overflow: hidden; */
+}
+.card h2{
+    position: center;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* form style */
+.formContainer{
+    padding:10px;
+      overflow: auto;
+  /* overflow-y: scroll; */
+}
+#deleteBtn{
+  display: none;
+}
+.container label{
+   display: inline-block;
+     /* display: flex; */
+
+   width:100px;
+   padding: 4px 4px;
+   /* text-align: left; */
+   vertical-align: top;
+   color: blue;
+   clear: both;
+}
+.container input, textarea{
+  display: inline-block;
+  width: 30%; 
+  /* 60% 400px*/
+  padding: 5px; 
+  margin-left: 10px;
+  width: 290px;
+  border:2px solid blue ;
+  /* clear: both; */
+} 
+
+.btn{
+  background-color: blue;
+  border: none;
+  color: white;
+  padding: 15px 15px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-flex;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  width: 100px;
+  height:50px;
+} 
+#cancelBtn{
+  background-color: #e7e7e7;
+    color: blue;
+
+}
+#deleteBtn{
+
+    background-color: #4c4cdf;
+    color: white;
+
+}
+.buttons{
+  display: inline-flex;
+  /* float: right; */
+}
+

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Display Events</title>
+  </head>
+
+  <body>
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-app.js";
+      import {
+        getDatabase,
+        get,
+        ref,
+        set,
+        child,
+        update,
+        remove,
+        onValue,
+        query,
+        orderByChild,
+      } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-database.js";
+
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyCF6kq-lfLZLbZObuP9LXKrm5sMG6MFckk",
+        authDomain: "fir-database-4f4b9.firebaseapp.com",
+        databaseURL: "https://fir-database-4f4b9-default-rtdb.firebaseio.com",
+        projectId: "fir-database-4f4b9",
+        storageBucket: "fir-database-4f4b9.appspot.com",
+        messagingSenderId: "20506880285",
+        appId: "1:20506880285:web:32f6fe35b4cd8cc01f99f4",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getDatabase();
+      //--------------------references---------------------------
+      var eventName = document.getElementById("eventName");
+      var eventDescription = document.getElementById("eventDescription");
+      var eventDate = document.getElementById("eventDate");
+      var submitBtn = document.getElementById("submitBtn");
+      var addBtn = document.getElementById("addBtn");
+      var deleteBtn = document.getElementById("deleteBtn");
+      var cancelBtn = document.getElementById("cancelBtn");
+      var inputDate = document.getElementById("eventDate").value;
+
+      //--------------------save data------------------------
+      function InsertData() {
+        if (
+          eventName.value == "" ||
+          eventDescription.value == "" ||
+          eventDate.value == ""
+        ) {
+          alert("event has not been added, please enter at least one value");
+          showCardsDiv();
+        } else {
+          set(ref(db, "TheEvents/" + eventName.value), {
+            nameOfEvent: eventName.value,
+            descriptionOfEvent: eventDescription.value,
+            dateOfEvent: eventDate.value,
+          })
+            .then(() => {
+              alert("event saved successfully");
+            })
+            .catch((error) => {
+              alert("error" + error);
+            });
+          showCardsDiv();
+          console.log("eventDate.value" + eventDate.value);
+        }
+      }
+      //--------------------delete data------------------------
+      function deleteData() {
+        remove(ref(db, "TheEvents/" + eventName.value))
+          .then(() => {
+            alert("event deleted successfully");
+          })
+          .catch((error) => {
+            alert("error" + error);
+          });
+        showCardsDiv();
+      }
+
+      //--------------------cancel data------------------------
+
+      function cancelData() {
+        eventName.value = "";
+        eventDescription.value = "";
+        eventDate.value = "";
+        showCardsDiv();
+      }
+      //-------------------- connect buttons ------------------------
+
+      submitBtn.addEventListener("click", InsertData);
+      addBtn.addEventListener("click", InsertData);
+      cancelBtn.addEventListener("click", cancelData);
+      deleteBtn.addEventListener("click", deleteData);
+
+      //--------------------display aready existed data when card is clicked to edit------------------------
+
+      function displayData(name, newForm) {
+        cardsDiv.style.display = "none";
+        formDiv.style.display = "grid";
+        const titleChange = document.getElementById("pageTitle");
+        document.getElementById("deleteBtn").style.display = "grid";
+        document.getElementById("submitBtn").style.display = "grid";
+        document.getElementById("cancelBtn").style.display = "grid";
+        document.getElementById("addBtn").style.display = "none";
+
+        titleChange.innerHTML = "Edit Event";
+
+        const dbref = ref(db);
+        get(child(dbref, "TheEvents/" + name))
+          .then((snapshot) => {
+            if (snapshot.exists()) {
+              eventName.value = snapshot.val().nameOfEvent;
+              eventDescription.value = snapshot.val().descriptionOfEvent;
+              console.log();
+              eventDate.value = snapshot.val().dateOfEvent;
+            } else {
+              alert("no data found");
+            }
+          })
+          .catch((error) => {
+            alert("error" + error);
+          });
+      }
+
+      var cardBody = document.getElementById("events");
+
+      //--------------------dynamically created card div and dispalys event data in it------------------------
+      function addEventToCard(eventName, eventDate) {
+        let cardDiv = document.createElement("div");
+        cardDiv.className = "card";
+        cardDiv.id = "cardId";
+        let title = document.createElement("h2");
+        let displayedDate = document.createElement("p");
+        title.innerHTML = eventName;
+        displayedDate.innerHTML = eventDate;
+        cardDiv.appendChild(title);
+        cardDiv.appendChild(displayedDate);
+        cardBody.appendChild(cardDiv);
+        cardDiv.addEventListener("click", function () {
+          displayData(eventName);
+        });
+        changeCardColor(eventDate, cardDiv);
+      }
+
+      //--------------------add all events and get all data ------------------------
+      //--------------------------add the event to the card
+      function addAllitems(TheEvents) {
+        cardBody.innerHTML = "";
+        TheEvents.forEach((element) => {
+          console.log("element", element);
+          addEventToCard(element.nameOfEvent, element.dateOfEvent);
+        });
+      }
+      //-----------gets data sorted based on date of event--------------------
+      function getAllData() {
+        const que = query(ref(db, "TheEvents"), orderByChild("dateOfEvent"));
+        get(que).then((snapshot) => {
+          var events = [];
+          snapshot.forEach((childSnapShot) => {
+            events.push(childSnapShot.val());
+          });
+          addAllitems(events);
+        });
+      }
+
+      window.onload = getAllData;
+      console.log("getAllData", getAllData);
+      //to update the list when added from firebase
+      // function getAllDataRealTime() {
+      //     const dbref = ref(db, "TheEvents");
+      //     onValue(dbref, (snapshot) => {
+      //         var events = [];
+      //         snapshot.forEach(childSnapshot => {
+      //             events.push(childSnapshot.val());
+
+      //         });
+      //         addAllitems(events);
+
+      //     })
+      // }
+      //   window.onload = getAllDataRealTime;
+    </script>
+
+    <!-- -------------------- full main container------------------------ -->
+
+    <div class="container">
+      <!-- --------------------side Bar------------------------ -->
+
+      <ul class="sideBar">
+        <li>
+          <a
+            class="activee"
+            onclick="showCardsDiv()"
+            id="defaultOpen"
+            id="listId"
+            >List</a
+          >
+        </li>
+        <li><a class="activee" onclick="showFormDiv()" id="formId">Form</a></li>
+      </ul>
+      <!-- --------------------top Bar------------------------ -->
+
+      <ul class="topBar" id="pageTitle">
+        <li style="padding-left: 1px">
+          <a onclick="showCardsDiv()">Events</a>
+        </li>
+        <li style="float: right"><a onclick="showFormDiv()">+New</a></li>
+      </ul>
+
+      <!-- --------------------cards container------------------------ -->
+
+      <div class="cardsContainer inside" id="events" style="display: grid">
+        <!-- <div onclick="openPage('form', this)" style="cursor: pointer;" class="card" id="eventCard">
+            </div> -->
+      </div>
+
+      <!-- --------------------form container------------------------ -->
+      <div id="form" class="formContainer inside" style="display: none">
+        <!-- <h2 class="topBar">Edit Event</h2> -->
+
+        <form>
+          <label for="eventName">Event Name </label>
+          <input type="text" id="eventName" name="eventName" />
+          <br /><br />
+          <label for="eventDescription ">Description</label>
+          <textarea name="eventDescription" id="eventDescription" rows="7">
+          </textarea>
+          <br /><br />
+          <label for="eventDate">Event Date </label>
+          <input type="date" id="eventDate" name="eventDate" />
+          <br /><br />
+          <div class="buttons">
+            <button id="addBtn" class="btn">Add</button>
+            <button id="submitBtn" class="btn">Save</button>
+            <button id="deleteBtn" class="btn">Delete</button>
+            <button id="cancelBtn" class="btn">Cancel</button>
+          </div>
+        </form>
+        <!-- <div class="buttons">
+                <button id="addBtn" class="btn">Add</button>
+                <button id="submitBtn" class="btn">Save</button>
+                <button id="deleteBtn" class="btn">delete</button>
+                <button id="cancelBtn" class="btn">cancel</button>
+            </div> -->
+      </div>
+    </div>
+    <script src="script.js"></script>
+    <script src="form.js"></script>
+    <script src="cards.js"></script>
+  </body>
+</html>
